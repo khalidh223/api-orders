@@ -1,17 +1,9 @@
 package com.shopping.orders.model
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.Table
+import com.shopping.orders.domain.OrderEntity
+import java.util.UUID
 
-@Entity
-@Table(name = "order_line_items")
-data class OrderLineItem (
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+data class OrderLineItemDto(
     val skuCode: String,
     val price: Long,
     val quantity: Int
