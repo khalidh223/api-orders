@@ -6,6 +6,7 @@ import com.shopping.orders.error.DuplicateLineItemRequestException
 import com.shopping.orders.error.OrderNotFoundException
 import com.shopping.orders.model.OrderLineItemDto
 import com.shopping.orders.model.OrderRequest
+import com.shopping.orders.model.OrderResponse
 import com.shopping.orders.repository.OrderLineItemRepository
 import com.shopping.orders.repository.OrderRepository
 import org.springframework.stereotype.Service
@@ -19,7 +20,7 @@ class OrderServiceImpl(
 ) : OrderService {
 
     @Transactional
-    override fun placeOrder(orderRequest: OrderRequest) {
+    override fun placeOrder(orderRequest: OrderRequest): OrderResponse {
         val order = orderRepository.save(OrderEntity(orderNumber = UUID.randomUUID().toString()))
         val orderLineItemEntities = orderRequest.orderLineItemsDtoList.map { it.toEntity(order) }
         val orderLineItemEntitiesSkuCodes = orderLineItemEntities.map { it.skuCode }
@@ -27,6 +28,7 @@ class OrderServiceImpl(
             throw DuplicateLineItemRequestException("Request contains duplicate line items by sku code")
         }
         orderLineItemRepository.saveAll(orderLineItemEntities)
+        return order.toResponse()
     }
 
     override fun getOrder(orderNumber: String): List<OrderLineItemEntity> {
@@ -42,5 +44,11 @@ class OrderServiceImpl(
             price = this.price,
             quantity = this.quantity,
             orderId = order.id
+        )
+
+    private fun OrderEntity.toResponse() =
+        OrderResponse(
+            id = this.id,
+            orderNumber = this.orderNumber
         )
 }

@@ -3,6 +3,7 @@ package com.shopping.orders.controller
 import com.shopping.orders.domain.OrderEntity
 import com.shopping.orders.domain.OrderLineItemEntity
 import com.shopping.orders.model.OrderRequest
+import com.shopping.orders.model.OrderResponse
 import com.shopping.orders.service.OrderService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,8 +20,8 @@ class OrderController(private val orderService: OrderService) {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    fun placeOrder(@RequestBody orderRequest: OrderRequest) {
-        orderService.placeOrder(orderRequest)
+    fun placeOrder(@RequestBody orderRequest: OrderRequest): OrderResponse {
+        return orderService.placeOrder(orderRequest)
     }
 
     @GetMapping("{order_number}")
