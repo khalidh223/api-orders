@@ -10,7 +10,6 @@ import io.kotlintest.inspectors.forOne
 import io.kotlintest.matchers.collections.shouldHaveSize
 import io.kotlintest.properties.Gen
 import io.kotlintest.shouldBe
-import io.kotlintest.shouldHave
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -58,7 +57,7 @@ class OrderControllerComponentTests(
         orderRepository.findAll() shouldHaveSize 1
         val orderSaved = orderRepository.findAll().first()
         orderLineItemRepository.findAll().forEach { orderLineItemEntity ->
-            orderLineItemEntity.order_id shouldBe orderSaved.id
+            orderLineItemEntity.orderId shouldBe orderSaved.id
         }
 
         val requestOrderLineItemEntities = request.orderLineItemsDtoList.map { orderLineItemDto ->
@@ -66,7 +65,7 @@ class OrderControllerComponentTests(
                 skuCode = orderLineItemDto.skuCode,
                 price = orderLineItemDto.price,
                 quantity = orderLineItemDto.quantity,
-                order_id = orderSaved.id
+                orderId = orderSaved.id
             )
         }
 
@@ -76,7 +75,7 @@ class OrderControllerComponentTests(
                     id = requestOrderLineItemEntity.id,
                     skuCode = orderLineItemEntity.skuCode,
                     price = orderLineItemEntity.price,
-                    order_id = orderLineItemEntity.order_id,
+                    orderId = orderLineItemEntity.orderId,
                     quantity = orderLineItemEntity.quantity
                 )
             }

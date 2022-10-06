@@ -16,5 +16,14 @@ class OrderExceptionHandler {
         )
         return ResponseEntity<OrderErrorResponse>(error, HttpStatus.BAD_REQUEST)
     }
+    @ExceptionHandler
+    fun handleException(exc: OrderNotFoundException): ResponseEntity<OrderErrorResponse> {
+        val error = OrderErrorResponse(
+            status = HttpStatus.NOT_FOUND.value(),
+            message = exc.message,
+            timestamp = System.currentTimeMillis()
+        )
+        return ResponseEntity<OrderErrorResponse>(error, HttpStatus.NOT_FOUND)
+    }
 
 }
