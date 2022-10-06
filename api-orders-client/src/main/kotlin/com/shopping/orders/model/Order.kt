@@ -1,14 +1,9 @@
 package com.shopping.orders.model
 
-import javax.persistence.*
+data class OrderRequest(val orderLineItemsDtoList: List<OrderLineItemDto>)
 
-@Entity
-@Table(name = "orders")
-data class Order (
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long = -1,
-    val orderNumber: String,
-    @OneToMany(cascade = [CascadeType.ALL])
-    val orderLineItemsList: List<OrderLineItem>
+data class OrderResponse(
+    val id: Long,
+    val orderNumber: String
 )
+
