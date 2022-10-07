@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>org.shopping</groupId>
-            <artifactId>api-orders-service</artifactId>
+            <artifactId>api-orders</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
