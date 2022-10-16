@@ -4,6 +4,7 @@ import com.shopping.orders.domain.OrderEntity
 import com.shopping.orders.domain.OrderLineItemEntity
 import com.shopping.orders.error.DuplicateLineItemRequestException
 import com.shopping.orders.error.OrderNotFoundException
+import com.shopping.orders.error.ProductOutOfStockException
 import com.shopping.orders.model.OrderLineItemDto
 import com.shopping.orders.model.OrderRequest
 import com.shopping.orders.model.OrderResponse
@@ -11,12 +12,14 @@ import com.shopping.orders.repository.OrderLineItemRepository
 import com.shopping.orders.repository.OrderRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import org.springframework.web.reactive.function.client.WebClient
+import java.util.*
 
 @Service
 class OrderServiceImpl(
     private val orderRepository: OrderRepository,
-    private val orderLineItemRepository: OrderLineItemRepository
+    private val orderLineItemRepository: OrderLineItemRepository,
+    private val webClientBuilder: WebClient.Builder,
 ) : OrderService {
 
     @Transactional
@@ -27,6 +30,19 @@ class OrderServiceImpl(
         if (orderLineItemEntitiesSkuCodes.size != orderLineItemEntitiesSkuCodes.distinct().count()) {
             throw DuplicateLineItemRequestException("Request contains duplicate line items by sku code")
         }
+
+        val allProductsInStock = webClientBuilder.build().get()
+            .uri(
+                "http://localhost:8082/api/inventory"
+            ) { uriBuilder -> uriBuilder.queryParam("skuCode", orderLineItemEntitiesSkuCodes).build() }
+            .retrieve()
+            .bodyToMono(Boolean::class.java)
+            .block()
+
+        if (allProductsInStock == false) {
+            throw ProductOutOfStockException("Order is not placed, one or more items are out of stock")
+        }
+
         orderLineItemRepository.saveAll(orderLineItemEntities)
         return order.toResponse()
     }
@@ -51,4 +67,5 @@ class OrderServiceImpl(
             id = this.id,
             orderNumber = this.orderNumber
         )
+
 }
