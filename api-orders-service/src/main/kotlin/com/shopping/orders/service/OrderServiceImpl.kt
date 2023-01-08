@@ -33,7 +33,7 @@ class OrderServiceImpl(
 
         val allProductsInStock = webClientBuilder.build().get()
             .uri(
-                "http://inventory-sservice/api/inventory"
+                "http://inventory-service/api/inventory"
             ) { uriBuilder -> uriBuilder.queryParam("skuCode", orderLineItemEntitiesSkuCodes).build() }
             .retrieve()
             .bodyToMono(Boolean::class.java)
